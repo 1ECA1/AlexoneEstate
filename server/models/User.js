@@ -51,6 +51,37 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
 
+        // Email verification
+    emailVerified: {
+      type: Boolean,
+      default: true, // Preserve access for existing accounts
+    },
+
+    emailVerificationTokenHash: {
+      type: String,
+      default: undefined,
+      select: false,
+    },
+
+    emailVerificationExpires: {
+      type: Date,
+      default: undefined,
+      select: false,
+    },
+
+    // Password reset
+    passwordResetTokenHash: {
+      type: String,
+      default: undefined,
+      select: false,
+    },
+
+    passwordResetExpires: {
+      type: Date,
+      default: undefined,
+      select: false,
+    },
+
     // Agent profile photo
     profilePhotoUrl: {
       type: String,

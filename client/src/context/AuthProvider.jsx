@@ -51,10 +51,10 @@ export function AuthProvider({ children }) {
     [saveSession]
   );
 
-  const register = useCallback(
-    async (details) => saveSession(await registerUser(details)),
-    [saveSession]
-  );
+ const register = useCallback(
+  async (details) => registerUser(details),
+  []
+);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);

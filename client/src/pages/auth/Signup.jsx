@@ -1,8 +1,6 @@
-import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import Footer from "../../components/layout/Footer";
-import Navbar from "../../components/layout/Navbar";
 
+import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -14,15 +12,17 @@ import {
   Phone,
   UserRound,
 } from "lucide-react";
+
+import Footer from "../../components/layout/Footer";
+import Navbar from "../../components/layout/Navbar";
 import { useAuth } from "../../hooks/useAuth";
 import { getErrorMessage } from "../../services/authService";
 
 export default function Signup() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { register } = useAuth();
 
-  // "/signup?role=agent" (from the home page button) preselects Agent
+  // /signup?role=agent preselects the Agent option.
   const [role, setRole] = useState(
     searchParams.get("role") === "agent" ? "agent" : "customer",
   );
@@ -42,7 +42,12 @@ export default function Signup() {
   const [success, setSuccess] = useState("");
 
   function updateField(event) {
-    setForm({ ...form, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
   }
 
   async function handleSubmit(event) {
@@ -50,8 +55,17 @@ export default function Signup() {
     setError("");
     setSuccess("");
 
-    if (form.password.length < 8) {
-      setError("Your password must contain at least 8 characters.");
+    const trimmedName = form.name.trim();
+    const trimmedEmail = form.email.trim();
+    const trimmedPhone = form.phone.trim();
+
+    if (trimmedName.length < 2 || trimmedName.length > 80) {
+      setError("Your name must contain between 2 and 80 characters.");
+      return;
+    }
+
+    if (form.password.length < 8 || form.password.length > 128) {
+      setError("Your password must contain between 8 and 128 characters.");
       return;
     }
 
@@ -63,19 +77,29 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      // The server returns a login token, so registering also signs you in
-      await register({
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
+      const result = await register({
+        name: trimmedName,
+        email: trimmedEmail,
+        phone: trimmedPhone,
         password: form.password,
         role,
       });
 
-      setSuccess("Your account has been created. Taking you in...");
-      window.setTimeout(() => navigate("/", { replace: true }), 800);
+      setSuccess(
+        result?.message ||
+          "Your account has been created. Check your email to verify your account before signing in.",
+      );
+
+      // Clear passwords but preserve the user's other form details.
+      setForm((current) => ({
+        ...current,
+        password: "",
+        confirmPassword: "",
+      }));
     } catch (err) {
-      setError(getErrorMessage(err, "Registration failed. Please try again."));
+      setError(
+        getErrorMessage(err, "Registration failed. Please try again."),
+      );
     } finally {
       setLoading(false);
     }
@@ -84,6 +108,7 @@ export default function Signup() {
   return (
     <main className="min-h-screen bg-[#faf9f6] p-4 text-[#20251f] sm:p-8">
       <Navbar />
+
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col">
         <Link
           to="/"
@@ -99,6 +124,7 @@ export default function Signup() {
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e1c58a] text-[#20251f]">
                 <House size={23} />
               </span>
+
               <span className="text-xl font-semibold tracking-tight">
                 Haven<span className="text-[#e1c58a]">Estate</span>
               </span>
@@ -108,9 +134,11 @@ export default function Signup() {
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#e1c58a]">
                 Create your account
               </p>
+
               <h1 className="mt-5 max-w-lg text-4xl font-semibold leading-tight sm:text-5xl">
                 Find a place for your next chapter.
               </h1>
+
               <p className="mt-5 max-w-md text-sm leading-7 text-white/65 sm:text-base">
                 Create your account to start exploring property opportunities
                 with HavenEstate.
@@ -135,9 +163,11 @@ export default function Signup() {
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#a17b38]">
                 Get started
               </p>
+
               <h2 className="mt-3 text-3xl font-semibold tracking-tight">
                 Create an account
               </h2>
+
               <p className="mt-3 text-sm leading-6 text-gray-500">
                 Enter your details to get started with HavenEstate.
               </p>
@@ -157,11 +187,22 @@ export default function Signup() {
                   className="mt-5 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm leading-6 text-green-800"
                 >
                   {success}
+
+                  <p className="mt-3">
+                    Already verified?{" "}
+                    <Link
+                      to="/login"
+                      className="font-semibold underline underline-offset-2"
+                    >
+                      Sign in
+                    </Link>
+                  </p>
                 </div>
               )}
 
               <div className="mt-7">
                 <p className="mb-2 text-sm font-medium">I want to</p>
+
                 <div className="grid grid-cols-2 gap-2 rounded-2xl bg-stone-100 p-1">
                   {[
                     { value: "customer", label: "Find a property" },
@@ -192,8 +233,10 @@ export default function Signup() {
                   >
                     Full name
                   </label>
+
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
                     <UserRound size={18} className="shrink-0 text-gray-400" />
+
                     <input
                       id="name"
                       name="name"
@@ -201,6 +244,7 @@ export default function Signup() {
                       autoComplete="name"
                       required
                       minLength={2}
+                      maxLength={80}
                       value={form.name}
                       onChange={updateField}
                       placeholder="Your full name"
@@ -216,8 +260,10 @@ export default function Signup() {
                   >
                     Email address
                   </label>
+
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
                     <Mail size={18} className="shrink-0 text-gray-400" />
+
                     <input
                       id="email"
                       name="email"
@@ -239,8 +285,10 @@ export default function Signup() {
                   >
                     Phone number
                   </label>
+
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
                     <Phone size={18} className="shrink-0 text-gray-400" />
+
                     <input
                       id="phone"
                       name="phone"
@@ -262,8 +310,13 @@ export default function Signup() {
                   >
                     Password
                   </label>
+
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
-                    <LockKeyhole size={18} className="shrink-0 text-gray-400" />
+                    <LockKeyhole
+                      size={18}
+                      className="shrink-0 text-gray-400"
+                    />
+
                     <input
                       id="password"
                       name="password"
@@ -271,20 +324,26 @@ export default function Signup() {
                       autoComplete="new-password"
                       required
                       minLength={8}
+                      maxLength={128}
                       value={form.password}
                       onChange={updateField}
                       placeholder="At least 8 characters"
                       className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-gray-400"
                     />
+
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword((current) => !current)}
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
                       className="shrink-0 text-gray-400 hover:text-[#20251f]"
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -296,23 +355,31 @@ export default function Signup() {
                   >
                     Confirm password
                   </label>
+
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
-                    <LockKeyhole size={18} className="shrink-0 text-gray-400" />
+                    <LockKeyhole
+                      size={18}
+                      className="shrink-0 text-gray-400"
+                    />
+
                     <input
                       id="confirmPassword"
                       name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       autoComplete="new-password"
                       required
+                      minLength={8}
+                      maxLength={128}
                       value={form.confirmPassword}
                       onChange={updateField}
                       placeholder="Re-enter your password"
                       className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-gray-400"
                     />
+
                     <button
                       type="button"
                       onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
+                        setShowConfirmPassword((current) => !current)
                       }
                       aria-label={
                         showConfirmPassword
@@ -353,6 +420,7 @@ export default function Signup() {
           </section>
         </div>
       </div>
+
       <Footer />
     </main>
   );

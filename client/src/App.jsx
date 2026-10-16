@@ -9,6 +9,9 @@ import About from "./pages/public/About";
 
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import VerifyEmail from "./pages/auth/VerifyEmail";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AgentDashboard from "./pages/agent/AgentDashboard";
@@ -57,6 +60,9 @@ export default function App() {
           {/* Authentication */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Customer-only pages */}
           <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
