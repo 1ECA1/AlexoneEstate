@@ -1,0 +1,111 @@
+
+export const properties = [
+  {
+    id: "1",
+    title: "Contemporary Luxury Duplex",
+    location: "Lekki Phase 1, Lagos",
+    price: 185000000,
+    status: "For Sale",
+    type: "Detached Duplex",
+    bedrooms: 4,
+    bathrooms: 5,
+    area: 320,
+    listedAt: "2026-10-12",
+    image:
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
+  },
+  {
+    id: "2",
+    title: "Modern Minimalist Residence",
+    location: "Maitama, Abuja",
+    price: 12000000,
+    status: "For Rent",
+    type: "Luxury Apartment",
+    bedrooms: 3,
+    bathrooms: 3,
+    area: 210,
+    listedAt: "2026-10-11",
+    image:
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
+  },
+  {
+    id: "3",
+    title: "Elegant Family Home",
+    location: "GRA, Port Harcourt",
+    price: 95000000,
+    status: "For Sale",
+    type: "Semi-Detached Duplex",
+    bedrooms: 5,
+    bathrooms: 5,
+    area: 400,
+    listedAt: "2026-10-10",
+    image:
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85",
+  },
+  {
+  id: "4",
+  title: "Prime Commercial Plaza",
+  location: "Wuse 2, Abuja",
+  price: 450000000,
+  status: "For Sale",
+  type: "Commercial Property",
+  bedrooms: 0,
+  bathrooms: 4,
+  area: 900,
+  listedAt: "2026-10-09",
+  image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
+},
+{
+  id: "5",
+  title: "Serviced Land Plot",
+  location: "Epe, Lagos",
+  price: 18000000,
+  status: "For Sale",
+  type: "Residential Land",
+  bedrooms: 0,
+  bathrooms: 0,
+  area: 600,
+  listedAt: "2026-10-08",
+  image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
+},
+{
+  id: "6",
+  title: "Cozy Shortlet Studio",
+  location: "Victoria Island, Lagos",
+  price: 150000,
+  status: "Shortlet",
+  type: "Studio Apartment",
+  bedrooms: 1,
+  bathrooms: 1,
+  area: 45,
+  listedAt: "2026-10-07",
+  image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85",
+},
+{
+  id: "7",
+  title: "Spacious Terrace House",
+  location: "Gwarinpa, Abuja",
+  price: 7500000,
+  status: "For Rent",
+  type: "Terraced House",
+  bedrooms: 3,
+  bathrooms: 3,
+  area: 180,
+  listedAt: "2026-10-06",
+  image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
+},
+
+
+];
+
+
+// export const agents = [
+//     {
+//   name: "Your Agent Name",
+//   title: "Senior Property Consultant",
+//   phone: "+2348012345678",
+//   email: "agent@example.com",
+//   image: "/images/agent.jpg",
+// },
+
+// ]
