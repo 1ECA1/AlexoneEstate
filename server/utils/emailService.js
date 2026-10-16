@@ -1,12 +1,6 @@
 
-import nodemailer from "nodemailer";
-
 function getEmailConfig() {
-  const required = [
-    "SMTP_USER",
-    "SMTP_PASS",
-    "EMAIL_FROM",
-  ];
+  const required = ["BREVO_API_KEY", "EMAIL_FROM"];
 
   const missing = required.filter(
     (key) => !process.env[key]?.trim()
@@ -19,35 +13,79 @@ function getEmailConfig() {
   }
 
   return {
-    host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: Number(process.env.SMTP_PORT || 587) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    apiKey: process.env.BREVO_API_KEY,
+    senderEmail: process.env.EMAIL_FROM,
+    senderName: process.env.EMAIL_FROM_NAME || "HavenEstate",
   };
 }
 
 export async function sendEmail({ to, subject, text, html }) {
-  const transporter = nodemailer.createTransport(getEmailConfig());
+  const config = getEmailConfig();
 
-  return transporter.sendMail({
-    from: {
-      name: process.env.EMAIL_FROM_NAME || "HavenEstate",
-      address: process.env.EMAIL_FROM,
-    },
-    to,
-    subject,
-    text,
-    html,
-  });
+  const recipients = (Array.isArray(to) ? to : [to]).map(
+    (recipient) =>
+      typeof recipient === "string"
+        ? { email: recipient }
+        : recipient
+  );
+
+  const response = await fetch(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      method: "POST",
+      headers: {
+        "api-key": config.apiKey,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: {
+          name: config.senderName,
+          email: config.senderEmail,
+        },
+        to: recipients,
+        subject,
+        textContent: text,
+        htmlContent: html,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+
+    console.error(
+      "Brevo email API failed:",
+      response.status,
+      errorBody
+    );
+
+    throw new Error(
+      `Brevo email API returned HTTP ${response.status}`
+    );
+  }
+
+  return response.json();
 }
 
 export async function verifyEmailTransport() {
-  const transporter = nodemailer.createTransport(getEmailConfig());
+  const config = getEmailConfig();
 
-  await transporter.verify();
+  const response = await fetch(
+    "https://api.brevo.com/v3/account",
+    {
+      headers: {
+        "api-key": config.apiKey,
+        Accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Brevo API verification failed with HTTP ${response.status}`
+    );
+  }
 
   return true;
 }
