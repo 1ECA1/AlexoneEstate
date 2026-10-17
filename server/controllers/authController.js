@@ -1,11 +1,10 @@
+
 import { createHash, randomBytes } from "node:crypto";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import { sendEmail } from "../utils/emailService.js";
 
 const PUBLIC_ROLES = ["customer", "agent"];
-
-
 
 const CLIENT_URL =
   process.env.CLIENT_URL || "https://alexone-estate.vercel.app";
@@ -22,24 +21,8 @@ const escapeHtml = (value = "") =>
     "'": "&#39;",
   })[character]);
 
-async function sendVerificationEmail(user, token) {
-  const link = `${CLIENT_URL}/verify-email?token=${encodeURIComponent(token)}`;
-  const name = escapeHtml(user.name);
-
-  await sendEmail({
-    to: user.email,
-    subject: "Verify your HavenEstate email",
-    text: `Hello ${user.name}, verify your email using this link: ${link}. This link expires in 24 hours.`,
-    html: `
-      <h2>Welcome to HavenEstate, ${name}!</h2>
-      <p>Please verify your email address to activate your account.</p>
-      <p><a href="${link}">Verify my email</a></p>
-      <p>This link expires in 24 hours.</p>
-      <p>If you did not create this account, you can ignore this email.</p>
-    `,
-  });
-}
-
+// Send a password-reset email.
+// Email verification is disabled for now.
 async function sendPasswordResetEmail(user, token) {
   const link = `${CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
   const name = escapeHtml(user.name);
@@ -57,7 +40,6 @@ async function sendPasswordResetEmail(user, token) {
     `,
   });
 }
-
 
 // Fields returned to the frontend.
 // Never expose passwords or internal password hashes.
@@ -85,16 +67,18 @@ const sendAuthResponse = (res, statusCode, user) => {
 };
 
 // POST /api/auth/register
-
+// Register a customer or agent without email verification.
 export const register = async (req, res, next) => {
   try {
     const { name, email, password, phone, role } = req.body || {};
 
+    // Validate registration details.
     if (
       typeof name !== "string" ||
       name.trim().length < 2 ||
       name.trim().length > 80 ||
       typeof email !== "string" ||
+      !email.trim() ||
       typeof password !== "string" ||
       password.length < 8 ||
       password.length > 128
@@ -106,44 +90,40 @@ export const register = async (req, res, next) => {
       });
     }
 
-    if (!PUBLIC_ROLES.includes(role) && role !== undefined) {
+    // Only customer and agent registration is allowed publicly.
+    if (role !== undefined && !PUBLIC_ROLES.includes(role)) {
       return res.status(400).json({
         success: false,
         message: "Invalid registration role.",
       });
     }
 
-    const verificationToken = randomBytes(32).toString("hex");
+    const normalizedEmail = email.trim().toLowerCase();
 
+    // Check for an existing account before creating a new one.
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "An account with this email already exists.",
+      });
+    }
+
+    // Create the account without requiring email verification.
     const user = await User.create({
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       password,
       phone: typeof phone === "string" ? phone.trim() : "",
       role: role || "customer",
-      emailVerified: false,
-      emailVerificationTokenHash: hashToken(verificationToken),
-      emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      emailVerified: true,
     });
 
-    try {
-      await sendVerificationEmail(user, verificationToken);
-
-      return res.status(201).json({
-        success: true,
-        message:
-          "Account created. Check your email for the verification link before logging in.",
-      });
-    } catch (emailError) {
-      console.error("Verification email could not be sent:", emailError.message);
-
-      return res.status(201).json({
-        success: true,
-        emailSent: false,
-        message:
-          "Your account was created, but the verification email could not be sent. Please use Resend Verification.",
-      });
-    }
+    // Return the token immediately so the frontend can log the user in.
+    return sendAuthResponse(res, 201, user);
   } catch (error) {
     if (error.code === 11000) {
       return res.status(409).json({
@@ -163,11 +143,11 @@ export const register = async (req, res, next) => {
   }
 };
 
-
 // POST /api/auth/login
+// Login without requiring email verification.
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     if (
       typeof email !== "string" ||
@@ -201,6 +181,7 @@ export const login = async (req, res, next) => {
       });
     }
 
+    // Continue to prevent deactivated accounts from logging in.
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
@@ -208,14 +189,7 @@ export const login = async (req, res, next) => {
       });
     }
 
-    if (user.emailVerified === false) {
-  return res.status(403).json({
-    success: false,
-    code: "EMAIL_NOT_VERIFIED",
-    message: "Please verify your email before logging in.",
-  });
-}
-
+    // Email verification is intentionally not checked here.
     return sendAuthResponse(res, 200, user);
   } catch (error) {
     return next(error);
@@ -223,7 +197,7 @@ export const login = async (req, res, next) => {
 };
 
 // GET /api/auth/me
-// Returns the currently authenticated user's profile.
+// Return the currently authenticated user's profile.
 export const getMe = async (req, res) => {
   return res.status(200).json({
     success: true,
@@ -232,14 +206,13 @@ export const getMe = async (req, res) => {
 };
 
 // PATCH /api/auth/me
-// Updates the authenticated user's personal profile.
+// Update the authenticated user's personal profile.
 // Agent professional fields are available only to agents.
 export const updateMe = async (req, res, next) => {
   try {
     const user = req.user;
     const body = req.body || {};
 
-    // Prevent changes to protected account properties.
     const allowedFields = [
       "name",
       "email",
@@ -263,52 +236,47 @@ export const updateMe = async (req, res, next) => {
       });
     }
 
-    // Validate name only if the client submitted it.
+    // Validate and update name.
     if (body.name !== undefined) {
       if (
         typeof body.name !== "string" ||
-        body.name.trim().length < 2
+        body.name.trim().length < 2 ||
+        body.name.trim().length > 80
       ) {
         return res.status(400).json({
           success: false,
-          message: "Name must contain at least 2 characters.",
-        });
-      }
-
-      if (body.name.trim().length > 80) {
-        return res.status(400).json({
-          success: false,
-          message: "Name cannot exceed 80 characters.",
+          message: "Name must contain 2–80 characters.",
         });
       }
 
       user.name = body.name.trim();
     }
 
-    // Validate email only if submitted.
-    // Email changes require a separate verification flow.
-if (body.email !== undefined) {
-  if (
-    typeof body.email !== "string" ||
-    !body.email.trim()
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "A valid email address is required.",
-    });
-  }
+    // Keep the existing email-change restriction.
+    // Changing an email address is separate from registration verification.
+    if (body.email !== undefined) {
+      if (
+        typeof body.email !== "string" ||
+        !body.email.trim()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "A valid email address is required.",
+        });
+      }
 
-  const submittedEmail = body.email.trim().toLowerCase();
+      const submittedEmail = body.email.trim().toLowerCase();
 
-  if (submittedEmail !== user.email) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Changing your email requires a separate email verification process.",
-    });
-  }
-}
+      if (submittedEmail !== user.email) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Changing your email is not supported through this profile endpoint.",
+        });
+      }
+    }
 
+    // Validate and update phone.
     if (body.phone !== undefined) {
       if (typeof body.phone !== "string") {
         return res.status(400).json({
@@ -320,6 +288,7 @@ if (body.email !== undefined) {
       user.phone = body.phone.trim();
     }
 
+    // Only agents may update professional details.
     const agentFields = [
       "location",
       "specialty",
@@ -327,9 +296,8 @@ if (body.email !== undefined) {
       "bio",
     ];
 
-    const submittedAgentFields = agentFields.filter(
-      (field) =>
-        Object.prototype.hasOwnProperty.call(body, field)
+    const submittedAgentFields = agentFields.filter((field) =>
+      Object.prototype.hasOwnProperty.call(body, field)
     );
 
     if (
@@ -391,7 +359,7 @@ if (body.email !== undefined) {
       user.bio = body.bio.trim();
     }
 
-    // Validate and update experience.
+    // Validate and update years of experience.
     if (body.yearsOfExperience !== undefined) {
       const experience = body.yearsOfExperience;
 
@@ -425,8 +393,6 @@ if (body.email !== undefined) {
       message: "Your profile has been updated successfully.",
       user: formatUser(updatedUser),
     });
-
-
   } catch (error) {
     if (error.code === 11000) {
       return res.status(409).json({
@@ -446,88 +412,8 @@ if (body.email !== undefined) {
   }
 };
 
-
-export const verifyEmail = async (req, res, next) => {
-  try {
-    const { token } = req.query;
-
-    if (typeof token !== "string" || !token) {
-      return res.status(400).json({
-        success: false,
-        message: "A verification token is required.",
-      });
-    }
-
-    const user = await User.findOne({
-      emailVerificationTokenHash: hashToken(token),
-      emailVerificationExpires: { $gt: new Date() },
-    }).select(
-      "+emailVerificationTokenHash +emailVerificationExpires"
-    );
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "This verification link is invalid or has expired.",
-      });
-    }
-
-    user.emailVerified = true;
-    user.emailVerificationTokenHash = undefined;
-    user.emailVerificationExpires = undefined;
-    await user.save();
-
-    return res.json({
-      success: true,
-      message: "Your email has been verified. You can now log in.",
-    });
-  } catch (error) {
-    return next(error);
-  }
-};
-
-export const resendVerification = async (req, res, next) => {
-  try {
-    const { email } = req.body || {};
-
-    if (typeof email !== "string" || !email.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide your email address.",
-      });
-    }
-
-    const user = await User.findOne({
-      email: email.trim().toLowerCase(),
-    });
-
-    const genericMessage =
-      "If an unverified account exists for that email, a verification link will be sent.";
-
-    if (!user || user.emailVerified !== false) {
-      return res.json({ success: true, message: genericMessage });
-    }
-
-    const token = randomBytes(32).toString("hex");
-
-    user.emailVerificationTokenHash = hashToken(token);
-    user.emailVerificationExpires = new Date(
-      Date.now() + 24 * 60 * 60 * 1000
-    );
-    await user.save();
-
-    try {
-      await sendVerificationEmail(user, token);
-    } catch (emailError) {
-      console.error("Resend verification failed:", emailError.message);
-    }
-
-    return res.json({ success: true, message: genericMessage });
-  } catch (error) {
-    return next(error);
-  }
-};
-
+// POST /api/auth/forgot-password
+// Password-reset email remains enabled.
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body || {};
@@ -548,7 +434,10 @@ export const forgotPassword = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.json({ success: true, message: genericMessage });
+      return res.json({
+        success: true,
+        message: genericMessage,
+      });
     }
 
     const token = randomBytes(32).toString("hex");
@@ -557,20 +446,29 @@ export const forgotPassword = async (req, res, next) => {
     user.passwordResetExpires = new Date(
       Date.now() + 60 * 60 * 1000
     );
+
     await user.save();
 
     try {
       await sendPasswordResetEmail(user, token);
     } catch (emailError) {
-      console.error("Password-reset email failed:", emailError.message);
+      console.error(
+        "Password-reset email failed:",
+        emailError.message
+      );
     }
 
-    return res.json({ success: true, message: genericMessage });
+    return res.json({
+      success: true,
+      message: genericMessage,
+    });
   } catch (error) {
     return next(error);
   }
 };
 
+// POST /api/auth/reset-password
+// Reset the password using the emailed token.
 export const resetPassword = async (req, res, next) => {
   try {
     const { token, password } = req.body || {};
@@ -600,13 +498,15 @@ export const resetPassword = async (req, res, next) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "This password-reset link is invalid or has expired.",
+        message:
+          "This password-reset link is invalid or has expired.",
       });
     }
 
     user.password = password;
     user.passwordResetTokenHash = undefined;
     user.passwordResetExpires = undefined;
+
     await user.save();
 
     return res.json({

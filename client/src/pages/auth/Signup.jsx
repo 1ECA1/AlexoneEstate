@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
@@ -24,7 +23,7 @@ export default function Signup() {
 
   // /signup?role=agent preselects the Agent option.
   const [role, setRole] = useState(
-    searchParams.get("role") === "agent" ? "agent" : "customer",
+    searchParams.get("role") === "agent" ? "agent" : "customer"
   );
 
   const [form, setForm] = useState({
@@ -52,6 +51,7 @@ export default function Signup() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
     setError("");
     setSuccess("");
 
@@ -61,6 +61,11 @@ export default function Signup() {
 
     if (trimmedName.length < 2 || trimmedName.length > 80) {
       setError("Your name must contain between 2 and 80 characters.");
+      return;
+    }
+
+    if (!trimmedEmail) {
+      setError("Please enter your email address.");
       return;
     }
 
@@ -85,20 +90,23 @@ export default function Signup() {
         role,
       });
 
+      // The backend should return a token and user after registration.
+      // Whether this automatically logs the user in depends on useAuth.
       setSuccess(
         result?.message ||
-          "Your account has been created. Check your email to verify your account before signing in.",
+          "Your account has been created successfully. You can now sign in."
       );
 
-      // Clear passwords but preserve the user's other form details.
-      setForm((current) => ({
-        ...current,
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
         password: "",
         confirmPassword: "",
-      }));
+      });
     } catch (err) {
       setError(
-        getErrorMessage(err, "Registration failed. Please try again."),
+        getErrorMessage(err, "Registration failed. Please try again.")
       );
     } finally {
       setLoading(false);
@@ -119,6 +127,7 @@ export default function Signup() {
         </Link>
 
         <div className="my-auto grid overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-sm lg:grid-cols-2">
+          {/* Left promotional section */}
           <section className="flex flex-col justify-between bg-[#20251f] p-7 text-white sm:p-12 lg:min-h-[760px]">
             <Link to="/" className="flex w-fit items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e1c58a] text-[#20251f]">
@@ -158,6 +167,7 @@ export default function Signup() {
             </p>
           </section>
 
+          {/* Registration form */}
           <section className="flex items-center justify-center p-6 sm:p-10 lg:p-12">
             <div className="w-full max-w-md">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#a17b38]">
@@ -172,6 +182,7 @@ export default function Signup() {
                 Enter your details to get started with HavenEstate.
               </p>
 
+              {/* Error message */}
               {error && (
                 <div
                   role="alert"
@@ -181,15 +192,16 @@ export default function Signup() {
                 </div>
               )}
 
+              {/* Success message */}
               {success && (
                 <div
                   role="status"
                   className="mt-5 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm leading-6 text-green-800"
                 >
-                  {success}
+                  <p>{success}</p>
 
                   <p className="mt-3">
-                    Already verified?{" "}
+                    Ready to continue?{" "}
                     <Link
                       to="/login"
                       className="font-semibold underline underline-offset-2"
@@ -200,6 +212,7 @@ export default function Signup() {
                 </div>
               )}
 
+              {/* Account type selection */}
               <div className="mt-7">
                 <p className="mb-2 text-sm font-medium">I want to</p>
 
@@ -212,7 +225,11 @@ export default function Signup() {
                       key={option.value}
                       type="button"
                       aria-pressed={role === option.value}
-                      onClick={() => setRole(option.value)}
+                      onClick={() => {
+                        setRole(option.value);
+                        setError("");
+                        setSuccess("");
+                      }}
                       className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                         role === option.value
                           ? "bg-[#20251f] text-white shadow-sm"
@@ -226,6 +243,7 @@ export default function Signup() {
               </div>
 
               <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+                {/* Full name */}
                 <div>
                   <label
                     htmlFor="name"
@@ -235,7 +253,10 @@ export default function Signup() {
                   </label>
 
                   <div className="flex items-center gap-3 rounded-2xl border border-[#e9e6df] bg-[#faf9f6] px-4 focus-within:border-[#a17b38]">
-                    <UserRound size={18} className="shrink-0 text-gray-400" />
+                    <UserRound
+                      size={18}
+                      className="shrink-0 text-gray-400"
+                    />
 
                     <input
                       id="name"
@@ -253,6 +274,7 @@ export default function Signup() {
                   </div>
                 </div>
 
+                {/* Email */}
                 <div>
                   <label
                     htmlFor="email"
@@ -278,6 +300,7 @@ export default function Signup() {
                   </div>
                 </div>
 
+                {/* Phone */}
                 <div>
                   <label
                     htmlFor="phone"
@@ -303,6 +326,7 @@ export default function Signup() {
                   </div>
                 </div>
 
+                {/* Password */}
                 <div>
                   <label
                     htmlFor="password"
@@ -333,7 +357,9 @@ export default function Signup() {
 
                     <button
                       type="button"
-                      onClick={() => setShowPassword((current) => !current)}
+                      onClick={() =>
+                        setShowPassword((current) => !current)
+                      }
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -348,6 +374,7 @@ export default function Signup() {
                   </div>
                 </div>
 
+                {/* Confirm password */}
                 <div>
                   <label
                     htmlFor="confirmPassword"
@@ -397,12 +424,14 @@ export default function Signup() {
                   </div>
                 </div>
 
+                {/* Submit */}
                 <button
                   type="submit"
                   disabled={loading}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-[#20251f] px-5 py-4 text-sm font-semibold text-white transition hover:bg-[#343b32] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? "Creating account..." : "Create account"}
+
                   {!loading && <ArrowRight size={17} />}
                 </button>
               </form>
