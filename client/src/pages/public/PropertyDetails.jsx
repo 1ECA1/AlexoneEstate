@@ -296,7 +296,7 @@ export default function PropertyDetails() {
       property.status === "For Sale"
         ? "Explore this property as a potential real estate investment or new home."
         : "This property is available for rent."
-    } Contact the HavenEstate team for further information and viewing arrangements.`;
+    } Contact the RealEstateConsultDesign team for further information and viewing arrangements.`;
 
   const handleShare = async () => {
     const shareUrl = window.location.href;
@@ -604,7 +604,7 @@ export default function PropertyDetails() {
         <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_350px]">
           <div className="space-y-8">
             {/* Quick facts */}
-            <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <section className="grid grid-cols-3 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-black/5 bg-white p-5">
                 <BedDouble size={22} className="mb-4 text-[#a17b38]" />
                 <p className="text-2xl font-semibold">
@@ -914,13 +914,13 @@ export default function PropertyDetails() {
                 property.agent?.image ||
                 "https://ui-avatars.com/api/?name=HavenEstate+Agent&background=20251f&color=ffffff&size=160"
               }
-              alt={property.agent?.name || "HavenEstate Agent"}
+              alt={property.agent?.name || "RealEstateConsultDesign Agent"}
               className="h-20 w-20 rounded-2xl object-cover"
             />
 
             <div className="min-w-0 flex-1">
               <h3 className="text-lg font-semibold">
-                {property.agent?.name || "HavenEstate Property Team"}
+                {property.agent?.name || "RealEstateConsultDesign Property Team"}
               </h3>
 
               <p className="mt-1 text-sm text-gray-500">

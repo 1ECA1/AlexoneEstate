@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import Logo from "../common/Logo";
 import {
   Heart,
   Menu,
@@ -167,8 +168,8 @@ export default function Navbar() {
       : "/customer";
 
   // Replace these with your actual business contact details.
-  const contactEmail = "info@havenestate.com";
-  const contactPhone = "+234 800 000 0000";
+  const contactEmail = "realestateconsultdesign@gmail.com";
+  const contactPhone = "+234 803 0763 972";
 
   function closeMobile() {
     setMobileOpen(false);
@@ -242,20 +243,8 @@ export default function Navbar() {
       <nav className="relative w-full bg-[#20251f] shadow-md">
         <div className="mx-auto flex min-h-[86px] w-full items-center justify-between gap-5 px-5 sm:px-8 lg:px-10 2xl:px-14">
 
-          {/* Logo */}
-          <Link
-            to="/"
-            onClick={closeMobile}
-            className="flex shrink-0 items-center gap-3"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e1c58a] text-xl font-bold text-[#20251f]">
-              H
-            </span>
-
-            <span className="text-xl font-bold tracking-tight sm:text-2xl">
-              Haven<span className="text-[#e1c58a]">Estate</span>
-            </span>
-          </Link>
+                   {/* Logo */}
+          <Logo onClick={closeMobile} />
 
           {/* Desktop main links — every item has an icon */}
           <div className="hidden items-center gap-5 xl:flex 2xl:gap-7">

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowUp, Mail, MapPin } from "lucide-react";
+import Logo from "../common/Logo";
 
 /* Link with an animated underline that grows on hover */
 function FooterLink({ to, children }) {
@@ -48,14 +49,7 @@ export default function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <Link to="/" className="group inline-flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#e1c58a] text-lg font-bold text-[#20251f] transition duration-300 group-hover:rotate-6 group-hover:scale-105">
-                H
-              </span>
-              <span className="text-xl font-bold tracking-tight">
-                HavenEstate
-              </span>
-            </Link>
+           <Logo />
 
             <p className="mt-5 max-w-xs text-sm leading-7 text-white/60">
               Find a place to call home. Discover exceptional properties and
@@ -130,10 +124,10 @@ export default function Footer() {
                   <Mail size={16} />
                 </span>
                 <a
-                  href="mailto:hello@havenestate.com"
+                  href="realestateconsultdesign@gmail.com"
                   className="group relative inline-block self-center pb-1 transition hover:text-white"
                 >
-                  hello@havenestate.com
+                  realestateconsultdesign@gmail.com
                   <span className="absolute bottom-0 left-0 h-[2px] w-0 rounded-full bg-gradient-to-r from-[#e1c58a] to-[#f4e3b8] transition-all duration-300 group-hover:w-full" />
                 </a>
               </li>
@@ -156,7 +150,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} HavenEstate. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} RealEstateConsultDesign. All rights reserved.</p>
 
           <div className="flex items-center gap-6">
             <Link

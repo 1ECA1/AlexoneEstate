@@ -1061,7 +1061,7 @@ export default function AdminDashboard() {
               <div className="mb-6">
                 <h2 className="text-xl font-semibold">Property Listings</h2>
                 <p className="mt-1 text-sm text-stone-500">
-                  Review and manage properties on HavenEstate.
+                  Review and manage properties on RealEstateConsultDesign.
                 </p>
               </div>
 

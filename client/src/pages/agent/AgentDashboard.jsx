@@ -976,7 +976,7 @@ export default function AgentDashboard() {
 
               <div className="mt-6 flex flex-col gap-3 border-t border-stone-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-xs leading-6 text-stone-500">
-                  Your profile details are saved to your HavenEstate account.
+                  Your profile details are saved to your RealEstateConsultDesign account.
                 </p>
 
                 <button

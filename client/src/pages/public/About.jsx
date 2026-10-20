@@ -52,7 +52,7 @@ export default function About() {
             <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.9fr]">
               <div>
                 <span className="inline-flex items-center rounded-full border border-[#e8dfcd] bg-white px-4 py-2 text-xs font-medium uppercase tracking-[0.16em] text-[#82632e]">
-                  About HavenEstate
+                  About RealEstateConsultDesign
                 </span>
 
                 <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
@@ -126,7 +126,7 @@ export default function About() {
                 you live, work, and plan for the future.
               </p>
               <p>
-                HavenEstate brings property discovery into a focused,
+                RealEstateConsultDesign brings property discovery into a focused,
                 approachable experience. We want visitors to browse listings,
                 compare possibilities, and connect with property professionals
                 without unnecessary complexity.
@@ -187,7 +187,7 @@ export default function About() {
                 What guides us
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                The values behind HavenEstate
+                The values behind RealEstateConsultDesign
               </h2>
               <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
                 The principles we want reflected in every part of the property
@@ -234,7 +234,7 @@ export default function About() {
 
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#a17b38]">
-                The HavenEstate experience
+                The RealEstateConsultDesign experience
               </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
                 Everything starts with understanding what matters to you.
@@ -281,7 +281,7 @@ export default function About() {
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-white/65 sm:text-base">
                   Explore the listings and discover possibilities with
-                  HavenEstate.
+                  RealEstateConsultDesign.
                 </p>
               </div>
 

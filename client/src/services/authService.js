@@ -10,7 +10,7 @@ export function getErrorMessage(
   }
 
   if (error.request) {
-    return "Unable to connect to HavenEstate. Check that the backend server is running.";
+    return "Unable to connect to RealEstateConsultDesign. Check that the backend server is running.";
   }
 
   return fallback;

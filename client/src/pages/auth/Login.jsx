@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../../components/layout/Footer";
 import Navbar from "../../components/layout/Navbar";
+import Logo from "../../components/common/Logo";
 import {
   ArrowLeft,
   ArrowRight,
@@ -87,20 +88,13 @@ export default function Login() {
           className="inline-flex w-fit items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-[#a17b38]"
         >
           <ArrowLeft size={17} />
-          Back to HavenEstate
+          Back to RealEstateConsultDesign
         </Link>
 
         <div className="my-auto grid overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-sm lg:grid-cols-2">
           <section className="flex flex-col justify-between bg-[#20251f] p-7 text-white sm:p-12 lg:min-h-[680px]">
-            <Link to="/" className="flex w-fit items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e1c58a] text-[#20251f]">
-                <House size={23} />
-              </span>
-
-              <span className="text-xl font-semibold tracking-tight">
-                Haven<span className="text-[#e1c58a]">Estate</span>
-              </span>
-            </Link>
+                    {/* Logo */}
+          <Logo />
 
             <div className="my-12">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#e1c58a]">
@@ -141,7 +135,7 @@ export default function Login() {
               </h2>
 
               <p className="mt-3 text-sm leading-6 text-gray-500">
-                Enter your account details to access HavenEstate.
+                Enter your account details to access RealEstateConsultDesign.
               </p>
 
               {error && (
@@ -242,7 +236,7 @@ export default function Login() {
               </form>
 
               <p className="mt-8 text-center text-sm text-gray-500">
-                New to HavenEstate?{" "}
+                New to RealEstateConsultDesign?{" "}
                 <Link
                   to="/signup"
                   className="font-semibold text-[#82632e] hover:underline"
@@ -252,7 +246,7 @@ export default function Login() {
               </p>
 
               <p className="mt-8 text-center text-xs leading-5 text-gray-400">
-                By signing in, you agree to use HavenEstate in accordance with
+                By signing in, you agree to use RealEstateConsultDesign in accordance with
                 its applicable terms and privacy policy.
               </p>
             </div>

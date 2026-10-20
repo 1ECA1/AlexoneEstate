@@ -168,7 +168,7 @@ export default function CustomerInquiries() {
 
             <p className="mt-3 max-w-xl text-sm leading-7 text-stone-500">
               Track your property questions, read agent responses, and view
-              replies from the HavenEstate administration team.
+              replies from the RealEstateConsultDesign administration team.
             </p>
           </div>
 

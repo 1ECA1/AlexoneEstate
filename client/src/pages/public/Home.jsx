@@ -520,7 +520,7 @@ export default function Home() {
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#a17b38]">
-              The HavenEstate difference
+              The RealEstateConsultDesign difference
             </p>
             <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
               Property searching, made more personal.
