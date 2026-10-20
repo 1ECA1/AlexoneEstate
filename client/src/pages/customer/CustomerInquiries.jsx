@@ -376,7 +376,7 @@ export default function CustomerInquiries() {
                     <div className="mt-4 rounded-2xl border border-[#e4d6b7] bg-[#f8f5ed] p-4 sm:p-5">
                       <div className="flex items-center gap-2 text-sm font-semibold text-[#80602b]">
                         <ShieldCheck size={17} />
-                        HavenEstate administrator
+                        RealEstateConsultDesign administrator
                       </div>
 
                       {adminResponse ? (

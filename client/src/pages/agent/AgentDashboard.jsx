@@ -677,7 +677,7 @@ export default function AgentDashboard() {
 
           <Link
             to="/agent/properties/add"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#20251f] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#343a32]"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#a17b38] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#343a32]"
           >
             <Plus size={18} />
             Add New Property
@@ -1239,7 +1239,7 @@ export default function AgentDashboard() {
           </div>
 
           {!loadingInquiries && !inquiryError && (
-            <div className="grid gap-4 border-b border-stone-100 p-5 sm:grid-cols-3 sm:px-7">
+            <div className="grid grid-cols-3 gap-4 border-b border-stone-100 p-5 sm:grid-cols-3 sm:px-7">
               <div className="rounded-2xl bg-stone-50 p-4">
                 <p className="text-sm text-stone-500">Total inquiries</p>
                 <p className="mt-2 text-2xl font-semibold">
