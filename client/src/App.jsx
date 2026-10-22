@@ -132,6 +132,9 @@ import Favorites from "./pages/customer/Favorites";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import CustomerInquiries from "./pages/customer/CustomerInquiries";
 
+import FloatingAssistant from "./components/ai/FloatingAssistant";
+
+
 function NotFound() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#faf9f6] px-6 text-center">
@@ -165,6 +168,7 @@ export default function App() {
           <Route path="/agents" element={<Agents />} />
           <Route path="/about" element={<About />} />
           <Route path="/assistant" element={<Assistant />} />
+          
 
           {/* Authentication */}
           <Route path="/login" element={<Login />} />
@@ -209,6 +213,8 @@ export default function App() {
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        {/* Floating Assistant */}
+        <FloatingAssistant />
       </FavoritesProvider>
     </BrowserRouter>
   );
