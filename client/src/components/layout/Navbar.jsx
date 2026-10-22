@@ -20,30 +20,16 @@ import {
   Users,
   Info,
   LayoutDashboard,
+  Bot,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const saleLinks = [
-  {
-    label: "Flat",
-    href: "/properties?type=Flat&status=For%20Sale",
-  },
-  {
-    label: "Duplex",
-    href: "/properties?type=Duplex&status=For%20Sale",
-  },
-  {
-    label: "Apartment",
-    href: "/properties?type=Apartment&status=For%20Sale",
-  },
-  {
-    label: "House for Sale",
-    href: "/properties?type=House&status=For%20Sale",
-  },
-  {
-    label: "Land for Sale",
-    href: "/properties?type=Land&status=For%20Sale",
-  },
+  { label: "Flat", href: "/properties?type=Flat&status=For%20Sale" },
+  { label: "Duplex", href: "/properties?type=Duplex&status=For%20Sale" },
+  { label: "Apartment", href: "/properties?type=Apartment&status=For%20Sale" },
+  { label: "House for Sale", href: "/properties?type=House&status=For%20Sale" },
+  { label: "Land for Sale", href: "/properties?type=Land&status=For%20Sale" },
   {
     label: "Commercial Property",
     href: "/properties?type=Commercial&status=For%20Sale",
@@ -51,26 +37,11 @@ const saleLinks = [
 ];
 
 const rentLinks = [
-  {
-    label: "Flat",
-    href: "/properties?type=Flat&status=For%20Rent",
-  },
-  {
-    label: "Duplex",
-    href: "/properties?type=Duplex&status=For%20Rent",
-  },
-  {
-    label: "Apartment",
-    href: "/properties?type=Apartment&status=For%20Rent",
-  },
-  {
-    label: "House for Rent",
-    href: "/properties?type=House&status=For%20Rent",
-  },
-  {
-    label: "Land for Rent",
-    href: "/properties?type=Land&status=For%20Rent",
-  },
+  { label: "Flat", href: "/properties?type=Flat&status=For%20Rent" },
+  { label: "Duplex", href: "/properties?type=Duplex&status=For%20Rent" },
+  { label: "Apartment", href: "/properties?type=Apartment&status=For%20Rent" },
+  { label: "House for Rent", href: "/properties?type=House&status=For%20Rent" },
+  { label: "Land for Rent", href: "/properties?type=Land&status=For%20Rent" },
   {
     label: "Commercial Property",
     href: "/properties?type=Commercial&status=For%20Rent",
@@ -100,13 +71,7 @@ const propertyLinks = [
   },
 ];
 
-function MobileDropdown({
-  label,
-  links,
-  onNavigate,
-  isOpen,
-  onToggle,
-}) {
+function MobileDropdown({ label, links, onNavigate, isOpen, onToggle }) {
   return (
     <div className="border-b border-white/10">
       <button
@@ -116,11 +81,7 @@ function MobileDropdown({
         className="flex w-full items-center justify-between py-3.5 text-left text-[15px] font-medium text-white/90 transition hover:text-[#e1c58a]"
       >
         <span className="flex items-center gap-3">
-          {label === "Sale" ? (
-            <Tag size={18} />
-          ) : (
-            <KeyRound size={18} />
-          )}
+          {label === "Sale" ? <Tag size={18} /> : <KeyRound size={18} />}
           {label}
         </span>
 
@@ -167,7 +128,6 @@ export default function Navbar() {
       ? "/agent"
       : "/customer";
 
-  // Replace these with your actual business contact details.
   const contactEmail = "realestateconsultdesign@gmail.com";
   const contactPhone = "+234 803 0763 972";
 
@@ -194,15 +154,9 @@ export default function Navbar() {
 
   return (
     <header className="relative z-[60] w-full text-white">
-
-      {/* =====================================================
-          FIRST NAVBAR — PROPERTY TYPES + EMAIL + PHONE
-          Desktop only
-      ====================================================== */}
+      {/* Top navigation: property types and contact details */}
       <div className="hidden border-b border-white/10 bg-[#171b16] xl:block">
         <div className="mx-auto flex min-h-[62px] w-full items-center justify-between gap-8 px-6 lg:px-10 2xl:px-14">
-
-          {/* Property types */}
           <div className="flex min-w-0 items-center gap-5 2xl:gap-7">
             {propertyLinks.map(({ label, href, Icon }) => (
               <NavLink
@@ -216,7 +170,6 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Contact information */}
           <div className="flex shrink-0 items-center gap-6 2xl:gap-8">
             <a
               href={`mailto:${contactEmail}`}
@@ -237,18 +190,14 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* =====================================================
-          SECOND NAVBAR — MAIN WEBSITE NAVIGATION
-      ====================================================== */}
+      {/* Main navigation */}
       <nav className="relative w-full bg-[#20251f] shadow-md">
         <div className="mx-auto flex min-h-[86px] w-full items-center justify-between gap-5 px-5 sm:px-8 lg:px-10 2xl:px-14">
-
-                   {/* Logo */}
+          {/* Logo */}
           <Logo onClick={closeMobile} />
 
-          {/* Desktop main links — every item has an icon */}
+          {/* Desktop navigation */}
           <div className="hidden items-center gap-5 xl:flex 2xl:gap-7">
-
             <NavLink to="/" className={mainLinkClass}>
               <Home size={17} />
               Home
@@ -288,6 +237,12 @@ export default function Navbar() {
               About Us
             </NavLink>
 
+            {/* New Property Assistant link */}
+            <NavLink to="/assistant" className={mainLinkClass}>
+              <Bot size={17} />
+              Assistant
+            </NavLink>
+
             <NavLink
               to="/customer/favorites"
               aria-label="Favourites"
@@ -303,7 +258,7 @@ export default function Navbar() {
             </NavLink>
           </div>
 
-          {/* Desktop Login / Dashboard */}
+          {/* Desktop login, dashboard, and logout */}
           <div className="hidden shrink-0 items-center xl:flex">
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
@@ -352,9 +307,7 @@ export default function Navbar() {
             {mobileOpen ? <X size={23} /> : <Menu size={23} />}
           </button>
 
-          {/* =================================================
-              MOBILE NAVIGATION — EXISTING DROPDOWN BEHAVIOUR
-          ================================================== */}
+          {/* Mobile navigation */}
           {mobileOpen && (
             <>
               <button
@@ -366,7 +319,6 @@ export default function Navbar() {
 
               <div className="absolute right-0 top-full z-[70] max-h-[calc(100dvh-90px)] w-[40vw] min-w-[260px] max-w-[360px] overflow-y-auto rounded-bl-2xl border border-white/10 bg-[#20251f] p-4 shadow-2xl sm:p-5 xl:hidden">
                 <div className="flex flex-col">
-
                   <Link
                     to="/"
                     onClick={closeMobile}
@@ -383,7 +335,7 @@ export default function Navbar() {
                     isOpen={mobileDropdown === "Sale"}
                     onToggle={() =>
                       setMobileDropdown((current) =>
-                        current === "Sale" ? "" : "Sale"
+                        current === "Sale" ? "" : "Sale",
                       )
                     }
                   />
@@ -395,7 +347,7 @@ export default function Navbar() {
                     isOpen={mobileDropdown === "Rent"}
                     onToggle={() =>
                       setMobileDropdown((current) =>
-                        current === "Rent" ? "" : "Rent"
+                        current === "Rent" ? "" : "Rent",
                       )
                     }
                   />
@@ -425,6 +377,16 @@ export default function Navbar() {
                   >
                     <Info size={18} />
                     About Us
+                  </Link>
+
+                  {/* New mobile Property Assistant link */}
+                  <Link
+                    to="/assistant"
+                    onClick={closeMobile}
+                    className="flex items-center gap-3 border-b border-white/10 py-3.5 text-[15px] font-medium transition hover:text-[#e1c58a]"
+                  >
+                    <Bot size={18} />
+                    Property Assistant
                   </Link>
 
                   <Link
@@ -467,13 +429,16 @@ export default function Navbar() {
                     </Link>
                   )}
 
-                  {/* Contact information remains accessible on mobile */}
+                  {/* Contact information */}
                   <div className="mt-5 space-y-3 border-t border-white/10 pt-4">
                     <a
                       href={`mailto:${contactEmail}`}
                       className="flex items-center gap-2 break-all text-xs text-white/70 hover:text-[#e1c58a]"
                     >
-                      <Mail size={15} className="shrink-0 text-[#e1c58a]" />
+                      <Mail
+                        size={15}
+                        className="shrink-0 text-[#e1c58a]"
+                      />
                       {contactEmail}
                     </a>
 
@@ -481,7 +446,10 @@ export default function Navbar() {
                       href={`tel:${contactPhone.replace(/\s/g, "")}`}
                       className="flex items-center gap-2 text-xs text-white/70 hover:text-[#e1c58a]"
                     >
-                      <Phone size={15} className="shrink-0 text-[#e1c58a]" />
+                      <Phone
+                        size={15}
+                        className="shrink-0 text-[#e1c58a]"
+                      />
                       {contactPhone}
                     </a>
                   </div>
